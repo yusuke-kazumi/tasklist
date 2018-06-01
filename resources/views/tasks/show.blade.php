@@ -4,7 +4,7 @@
 
     <h1>id = {{ $task->id }} のタスク詳細ページ</h1>
 
-    <p>タイトル: {{ $task->title }}</p>
+    <p>ステータス: {{ $task->status }}</p>
     <p>メッセージ: {{ $task->content }}</p>
 
     {!! link_to_route('tasks.edit', 'このメッセージ編集', ['id' => $task->id]) !!}
@@ -14,3 +14,4 @@
     {!! Form::close() !!}
 
 @endsection
+
