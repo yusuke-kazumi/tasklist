@@ -16,11 +16,17 @@ class TasksController extends Controller
      */
     public function index()
     {
-        $tasks = Task::all();
-
-        return view('tasks.index', [
-            'tasks' => $tasks,
-        ]);
+        //$tasks = task::all(); いらない説
+        
+        if (\Auth::check()){
+            $user = \Auth::user();
+            $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
+               
+        return view('tasks.index' , ['tasks' => $tasks,]);
+        }
+	    else{
+        return redirect('login');
+	    }
     }
 
     /**
@@ -31,11 +37,17 @@ class TasksController extends Controller
     public function create()
     {
         $task = new Task;
-
-        return view('tasks.create', [
-            'task' => $task,
-        ]);
+        
+        if (\Auth::check()) {
+            return view('tasks.create', [
+                'task' => $task,
+            ]);
+        } else {
+        
+            return redirect('/tasks');
     }
+}
+
 
     /**
      * Store a newly created resource in storage.
@@ -46,16 +58,17 @@ class TasksController extends Controller
     public function store(Request $request)
     {
 	 $this->validate($request, [
-            'status' => 'required|max:10',   // add
+            'status' => 'required|max:10',
             'content' => 'required|max:191',
-        ]);
-
-
+    ]);
+          
         $task = new Task;
-        $task->status = $request->status;    // add
+        $task->status = $request->status;   
         $task->content = $request->content;
-	$task->save();
-
+        
+        $user= \Auth::user();
+        $task->user_id = $user->id;
+        $task->save();
 
         return redirect('/');
     }
@@ -69,11 +82,14 @@ class TasksController extends Controller
     public function show($id)
     {
         $task = Task::find($id);
-
-        return view('tasks.show', [
-            'task' => $task,
-        ]);
-    }
+        if (\Auth::id() === $task->user_id) {
+            return view('tasks.show', [
+                'task' => $task,
+            ]);
+        } else {
+        
+            return redirect('tasks');
+    }}
 
     /**
      * Show the form for editing the specified resource.
@@ -84,11 +100,15 @@ class TasksController extends Controller
     public function edit($id)
     {
         $task = Task::find($id);
+        if (\Auth::check()) {
+            return view('tasks.edit', [
+                'task' => $task,
+            ]);
+        } else {
+        
+            return redirect('tasks');
+    }}
 
-        return view('tasks.edit', [
-            'task' => $task,
-        ]);
-    }
 
     /**
      * Update the specified resource in storage.
@@ -111,7 +131,7 @@ class TasksController extends Controller
         $task->save();
 
 
-        return redirect('/');
+        return redirect('/tasks');
     }
 
     /**

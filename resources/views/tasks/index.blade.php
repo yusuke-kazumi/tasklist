@@ -21,6 +21,7 @@
                         <td>{{ $task->content }}</td>
                     </tr>
                 @endforeach
+{!! $tasks->render() !!}
             </tbody>
         </table>
     @endif
