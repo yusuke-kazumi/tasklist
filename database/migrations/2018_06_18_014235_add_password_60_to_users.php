@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddForeignkeyToTasklist2Table extends Migration
+class AddPassword60ToUsers extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,8 @@ class AddForeignkeyToTasklist2Table extends Migration
      */
     public function up()
     {
-        Schema::table('tasklist2', function (Blueprint $table) {
-            $table->integer('user_id')->unsigned()->index();
-            $table->string('content');
-           $table->foreign('user_id')->references('id')->on('users');
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('password', 60)->change();
         });
     }
 
@@ -27,8 +25,8 @@ class AddForeignkeyToTasklist2Table extends Migration
      */
     public function down()
     {
-        Schema::table('tasklist2', function (Blueprint $table) {
-            //
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('password')->change();
         });
     }
 }
